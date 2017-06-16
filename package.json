@@ -1,6 +1,6 @@
 {
-  "name": "dm-cli",
-  "version": "0.0.2",
+  "name": "dynamicmind-cli",
+  "version": "1.0.0",
   "description": "dynamicmind client",
   "main": "index.js",
   "bin": {
