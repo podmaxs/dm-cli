@@ -48,6 +48,51 @@
 			that.createEnviromentData(def,onGetEnviroments,error,incremental);
 		};
 
+		this.init = function(proyectKey){
+			let rootFile = pwd+'/builder.config.json';
+			let def = {
+				app_id      : 'com.dymns.'+proyectKey,
+				version     : '0.0.1',
+				name        : proyectKey,
+				description : 'The '+proyectKey+' project',
+				autor       : 'podmaxs',
+				autor_email : 'dev@dynamicmind.com',
+				auro_url    : 'http://dynamicmind.com'
+			};
+
+			fs.readFile(rootFile, 'utf8', function (err,data) {
+				let ndata = {},
+					error = false;
+				if (err) {
+			    	ndata[proyectKey] = def;
+				}else{
+					ndata = JSON.parse(data);
+					if(ndata[proyectKey] == undefined){
+				  		ndata[proyectKey] = def;
+					}else{
+						error = true;
+					}
+			  	}
+			  	if(ndata[proyectKey] != undefined && !error){
+			  		let json = JSON.stringify(ndata);
+					json = that.replaceAll(json,'","','",\n"');
+					json = that.replaceAll(json,'{"','{\n"');
+					json = that.replaceAll(json,'}','}\n');
+					json = that.replaceAll(json,'"}','"\n}');
+					fs.writeFile(rootFile, json, function(err) {
+			       		if(err) {
+			           		console.log(err);
+			       		}else{
+			       			console.log('The '+proyectKey+' was created');
+			       		}
+			   		}); 
+			  	}else{
+			  		console.log('Error: The '+proyectKey+' project already exist');
+			  	}
+			});
+		}
+
+
 		this.createEnviromentData = function(def,onGetEnviroments,error,incremental){
 			fs.readFile(pwd+'/builder.config.json', 'utf8', function (err,data) {
 			  if (err) {

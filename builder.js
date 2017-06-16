@@ -50,7 +50,11 @@
 							
 						},false);
 					}else{
-						that.run(cmd);
+						if((task[0] == 'init')){
+							config.mod.init(process.env.BUILDER_ENV);
+						}else{
+							that.run(cmd);
+						}
 					}
 				}
 			}else{

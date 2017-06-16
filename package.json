@@ -14,8 +14,7 @@
   ],
   "author": "podmaxs",
   "license": "MIT",
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
     "yargs": "^8.0.2",
     "colors": "^1.1.2"
