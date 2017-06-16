@@ -13,5 +13,8 @@
     "dynamicmind"
   ],
   "author": "podmaxs",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "yargs": "^8.0.2"
+  }
 }
