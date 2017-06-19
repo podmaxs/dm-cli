@@ -92,7 +92,7 @@
 			});
 
 			sp.stderr.on('data', function(data) {
-			    console.log(data);
+			    sp.stdin.write(data);
 			});
 
 			sp.on('close', function(code) {
