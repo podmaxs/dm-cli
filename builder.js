@@ -91,8 +91,12 @@
 			    console.log(data);
 			});
 
-			sp.stderr.on('data', function(data) {
-			    sp.stdin.write(data);
+			sp.stderr.on('data', function(data,log) {
+			    console.log(data);
+			});
+
+			sp.stdin.on('data', function(data) {
+				sp.stdin.write(data);
 			});
 
 			sp.on('close', function(code) {

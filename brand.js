@@ -30,7 +30,11 @@
 			});
 
 			sp.stderr.on('data', function(data) {
-			    sp.stdin.write(data);
+				try{
+			    	sp.stdin.write(data);
+				}catch(err){
+					console.log(data);
+				}
 			});
 
 			sp.on('close', function(code) {
