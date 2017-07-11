@@ -6,6 +6,7 @@
 	let colors   = require('colors');
 	let config   = require('./identity');
 	let git      = require('./git');
+	let firebase = require('./firebaseApply');
 
 	var builder  = new function(){
 		var that = this;
@@ -19,7 +20,10 @@
 					config.mod.update(function(conf){
 						brand.mod.update(process.env.BUILDER_ENV,function(){
 							that.run(cmd,function(){
-								git.mod.commit(conf.version,0);
+								firebase.apply(process.env.BUILDER_ENV)
+								.then(()=>{
+									git.mod.commit(conf.version,0);
+								});
 							});
 						});
 					});
@@ -30,7 +34,10 @@
 								that.reload_platform('android', function(){
 									that.reload_platform('ios', function(){
 										brand.mod.update(process.env.BUILDER_ENV,function(){
-											console.log('switched to '+process.env.BUILDER_ENV);
+											firebase.apply(process.env.BUILDER_ENV)
+											.then(()=>{
+												console.log('switched to '+process.env.BUILDER_ENV);
+											});
 										});		
 									});
 								});
@@ -38,7 +45,10 @@
 								if(task[1] == 'android' || task[1] == 'ios'){
 									that.reload_platform(task[1], function(){
 										brand.mod.update(process.env.BUILDER_ENV,function(){
-											console.log('switched to '+process.env.BUILDER_ENV);
+											firebase.apply(process.env.BUILDER_ENV)
+											.then(()=>{
+												console.log('switched to '+process.env.BUILDER_ENV);
+											});
 										});
 									});
 								}else{
@@ -53,7 +63,10 @@
 						if((task[0] == 'init')){
 							config.mod.init(process.env.BUILDER_ENV);
 						}else{
-							that.run(cmd);
+							firebase.apply(process.env.BUILDER_ENV)
+							.then(()=>{
+								that.run(cmd);	
+							});
 						}
 					}
 				}
@@ -78,7 +91,7 @@
 
 		this.reload_platform = function(platform,call){
 			that.run('cordova platform rm '+platform,function(){
-				that.run('ionic platform add '+platform, function(){
+				that.run('cordova platform add '+platform, function(){
 					call();
 				})
 			});
