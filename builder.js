@@ -12,16 +12,29 @@
 		var that = this;
 		var task = argv['_'];
 
-
+		this.reloadPLatforms = function(){
+			that.reload_platform('android', function(){
+				that.reload_platform('ios', function(){
+					brand.mod.update(process.env.BUILDER_ENV,function(){
+						that.run('cordova plugin add cordova-plugin-firebase@0.1.23', () => {
+							firebase.apply(process.env.BUILDER_ENV)
+							.then(()=>{
+								console.log('switched to '+process.env.BUILDER_ENV);
+							});
+						})
+					});		
+				});
+			});
+		}
 		this.create = function(){
 			if(task.length>=1){
 				var cmd = that.getCmd();
 				if((task[0] == 'run' || task[0] == 'build' || task[0] == 'prepare' || task[0] == 'emulate') && argv.quick==undefined){
-					config.mod.update(function(conf){
-						brand.mod.update(process.env.BUILDER_ENV,function(){
-							that.run(cmd,function(){
-								firebase.apply(process.env.BUILDER_ENV)
-								.then(()=>{
+					firebase.apply(process.env.BUILDER_ENV)
+					.then(()=>{
+						config.mod.update(function(conf){
+							brand.mod.update(process.env.BUILDER_ENV,function(){
+								that.run(cmd,function(){
 									git.mod.commit(conf.version,0);
 								});
 							});
@@ -31,16 +44,13 @@
 					if((task[0] == 'switch')){
 						config.mod.update(function(conf){
 							if(task[1] == 'all'){
-								that.reload_platform('android', function(){
-									that.reload_platform('ios', function(){
-										brand.mod.update(process.env.BUILDER_ENV,function(){
-											firebase.apply(process.env.BUILDER_ENV)
-											.then(()=>{
-												console.log('switched to '+process.env.BUILDER_ENV);
-											});
-										});		
+								that.run('cordova plugin rm cordova-plugin-firebase',
+									() => {
+										that.reloadPLatforms();
+									},
+									()=>{
+										that.reloadPLatforms();
 									});
-								});
 							}else{
 								if(task[1] == 'android' || task[1] == 'ios'){
 									that.reload_platform(task[1], function(){
@@ -97,7 +107,7 @@
 			});
 		}
 
-		this.run = function(cmd,onClose){
+		this.run = function(cmd,onClose,onError){
 			var sp = exec(cmd);
 
 			sp.stdout.on('data', function(data) {
@@ -106,6 +116,8 @@
 
 			sp.stderr.on('data', function(data,log) {
 			    console.log(data);
+			    if(onError != undefined)
+			    	onError(true);
 			});
 
 			sp.stdin.on('data', function(data) {

@@ -31,11 +31,16 @@ var firebase = new function(){
       }
     }
 
+    this.checkDir = function(dir){
+      if (!fs.existsSync(dir)){
+          fs.mkdirSync(dir);
+      }
+    }
+
     this.apply = function(env){
       return new Promise((resolve) =>{
         var config = fs.readFileSync("config.xml").toString(),
             name   = self.getValue(config, "name")
-
         if (self.directoryExists("platforms/ios")) {
           var paths = ["src/projects/firebase/"+env+"/GoogleService-Info.plist"];
 
@@ -43,8 +48,9 @@ var firebase = new function(){
             if (self.fileExists(paths[i])) {
               try {
                 var contents = fs.readFileSync(paths[i]).toString();
-                fs.writeFileSync("platforms/ios/" + name + "/Resources/GoogleService-Info.plist", contents)
-                fs.writeFileSync("platforms/ios/" + name + "/Resources/Resources/GoogleService-Info.plist", contents)
+                fs.writeFileSync("platforms/ios/" + name + "/Resources/GoogleService-Info.plist", contents);
+                //that.checkDir("platforms/ios/" + name + "/Resources/Resources/");
+                //fs.writeFileSync("platforms/ios/" + name + "/Resources/Resources/GoogleService-Info.plist", contents)
                 fs.writeFileSync("GoogleService-Info.plist", contents);
                 fs.writeFileSync("platforms/ios/www/GoogleService-Info.plist", contents);
               } catch(err) {
