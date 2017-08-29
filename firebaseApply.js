@@ -50,7 +50,7 @@ var firebase = new function(){
                 var contents = fs.readFileSync(paths[i]).toString();
                 fs.writeFileSync("platforms/ios/" + name + "/Resources/GoogleService-Info.plist", contents);
                 //that.checkDir("platforms/ios/" + name + "/Resources/Resources/");
-                //fs.writeFileSync("platforms/ios/" + name + "/Resources/Resources/GoogleService-Info.plist", contents)
+                fs.writeFileSync("platforms/ios/" + name + "/Resources/Resources/GoogleService-Info.plist", contents)
                 fs.writeFileSync("GoogleService-Info.plist", contents);
                 fs.writeFileSync("platforms/ios/www/GoogleService-Info.plist", contents);
               } catch(err) {

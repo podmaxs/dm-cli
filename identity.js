@@ -108,6 +108,19 @@
 			});
 		};
 
+		this.readBiulderEnviroment = function(env){
+			return new Promise((resolve, reject) =>{
+				fs.readFile(pwd+'/builder.config.json', 'utf8', function (err,data) {
+				  	if(err){
+				    	reject(err);
+				  	}else{
+					  	let conf = JSON.parse(data) || {};
+					  	resolve(conf[env] || conf['default']);
+				 	}
+				});
+			});
+		}
+
 		this.parseConf = function(d,def,onGetEnviroments,incremental){
 			for(let k in d)
 				def[k]=d[k];

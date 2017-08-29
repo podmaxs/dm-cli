@@ -6,7 +6,8 @@
 	let colors   = require('colors');
 	let config   = require('./identity');
 	let git      = require('./git');
-	let firebase = require('./firebaseApply');
+	let firebase = require('./firebaseApply'),
+		singned  = require('./signRelase');
 
 	var builder  = new function(){
 		var that = this;
@@ -70,13 +71,21 @@
 							
 						},false);
 					}else{
-						if((task[0] == 'init')){
-							config.mod.init(process.env.BUILDER_ENV);
+						if(task[0] == 'signed'){
+							if(task[1] == 'android'){
+								singned.deployApk();
+							}else{
+								console.log("Signed build "+task[1]+' un avariable');
+							}
 						}else{
-							firebase.apply(process.env.BUILDER_ENV)
-							.then(()=>{
-								that.run(cmd);	
-							});
+							if((task[0] == 'init')){
+								config.mod.init(process.env.BUILDER_ENV);
+							}else{
+								firebase.apply(process.env.BUILDER_ENV)
+								.then(()=>{
+									that.run(cmd);	
+								});
+							}
 						}
 					}
 				}
