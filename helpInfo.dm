@@ -17,7 +17,7 @@
 							enviroemnt: "variable de  entorno de proyecto"
 
 
-	- Build app:        $ dm-cli build [platform] --env=[enviroment] [--quick=on]
+	- Build app:        $ dm-cli [action] [platform] --env=[enviroment] [--quick=on]
 							
 							action: run | build | prepare | emulate
 
@@ -33,7 +33,7 @@
 							platform: android | ios
 
 							enviroemnt: "variable de  entorno de proyecto"
-	
+
 
 	- Switch proyect:   $ dm-cli switch [platform] --env=[enviroment]  
 
