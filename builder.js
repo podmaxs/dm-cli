@@ -7,7 +7,8 @@
 	let config   = require('./identity');
 	let git      = require('./git');
 	let firebase = require('./firebaseApply'),
-		singned  = require('./signRelase');
+		singned  = require('./signRelase'),
+		helpsrv  = require('./help');
 
 	var builder  = new function(){
 		var that = this;
@@ -78,13 +79,18 @@
 								console.log("Signed build "+task[1]+' un avariable');
 							}
 						}else{
-							if((task[0] == 'init')){
-								config.mod.init(process.env.BUILDER_ENV);
+
+							if(task[0] == 'help' || task[0] == 'h'){
+								helpsrv.getHelp();
 							}else{
-								firebase.apply(process.env.BUILDER_ENV)
-								.then(()=>{
-									that.run(cmd);	
-								});
+								if((task[0] == 'init')){
+									config.mod.init(process.env.BUILDER_ENV);
+								}else{
+									firebase.apply(process.env.BUILDER_ENV)
+									.then(()=>{
+										that.run(cmd);	
+									});
+								}
 							}
 						}
 					}
