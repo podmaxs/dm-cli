@@ -55,14 +55,33 @@
 									});
 							}else{
 								if(task[1] == 'android' || task[1] == 'ios'){
-									that.reload_platform(task[1], function(){
-										brand.mod.update(process.env.BUILDER_ENV,function(){
-											firebase.apply(process.env.BUILDER_ENV)
-											.then(()=>{
-												console.log('switched to '+process.env.BUILDER_ENV);
+
+									that.run('cordova plugin rm cordova-plugin-firebase',
+										() => {
+											that.reload_platform(task[1], function(){
+												brand.mod.update(process.env.BUILDER_ENV,function(){
+													that.run('cordova plugin add cordova-plugin-firebase@0.1.23', () => {
+														firebase.apply(process.env.BUILDER_ENV)
+														.then(()=>{
+															console.log('switched to '+process.env.BUILDER_ENV);
+														});
+													});
+												});
+											});
+										},
+										()=>{
+											that.reload_platform(task[1], function(){
+												brand.mod.update(process.env.BUILDER_ENV,function(){
+													that.run('cordova plugin add cordova-plugin-firebase@0.1.23', () => {
+														firebase.apply(process.env.BUILDER_ENV)
+														.then(()=>{
+															console.log('switched to '+process.env.BUILDER_ENV);
+														});
+													})
+												});
 											});
 										});
-									});
+									
 								}else{
 									brand.mod.update(process.env.BUILDER_ENV,function(){
 										console.log('switched to '+process.env.BUILDER_ENV);
