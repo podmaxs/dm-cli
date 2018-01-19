@@ -46,11 +46,13 @@
 					if((task[0] == 'switch')){
 						config.mod.update(function(conf){
 							if(task[1] == 'all'){
+								console.log(colors.green('switching to '+process.env.BUILDER_ENV));
 								that.run('cordova plugin rm cordova-plugin-firebase',
 									() => {
 										that.reloadPLatforms();
 									},
 									()=>{
+										console.log(colors.green('error on cordova plugin rm cordova-plugin-firebase'));
 										that.reloadPLatforms();
 									});
 							}else{
@@ -95,20 +97,35 @@
 							if(task[1] == 'android'){
 								singned.deployApk();
 							}else{
-								console.log("Signed build "+task[1]+' un avariable');
+								console.log("Signed build "+task[1]+" unavailable");
 							}
 						}else{
-
 							if(task[0] == 'help' || task[0] == 'h'){
 								helpsrv.getHelp();
 							}else{
 								if((task[0] == 'init')){
 									config.mod.init(process.env.BUILDER_ENV);
 								}else{
-									firebase.apply(process.env.BUILDER_ENV)
-									.then(()=>{
-										that.run(cmd);	
-									});
+									if((task[0] == 'status')){
+										console.log(colors.red("=================================================="));
+										console.log(colors.green('Working on'));
+										console.log(colors.red("=================================================="));
+										config.mod.status(function () {
+											if(argv.full){
+												console.log(colors.red("=================================================="));
+												console.log(colors.green("GIT"));
+												that.run('git status');
+											}else{
+												console.log("Argument unavailable");
+											}
+										});
+										
+									}else{
+										firebase.apply(process.env.BUILDER_ENV)
+										.then(()=>{
+											that.run(cmd);	
+										});
+									}
 								}
 							}
 						}

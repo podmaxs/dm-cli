@@ -14,7 +14,7 @@
 			incremental = incremental!=undefined?incremental:true;
 			fs.readFile(pwd+'/config.xml', 'utf8', function (err,data) {
 			  if (err) {
-			    return console.log(err);
+			    return console.log(colors.red(err));
 			  }
 			  that.getEnviromentData(function(configApp){
 			  	that.conf    = configApp;
@@ -188,6 +188,30 @@
 
 		this.replaceAll = function(data,search, replacement) {
 			return data.replace(new RegExp(search, 'g'), replacement);
+		};
+
+		this.status = function(onClose){
+			fs.readFile(pwd+'/config.xml', 'utf8', function (err,data) {
+				if (err) {
+				  	return console.log(colors.red(err));
+				} else {
+					if(data.indexOf('<widget id="') != -1 && data.indexOf('" version="') != -1){
+						var info = {
+							package: data.split('<widget id="')[1].split('" version="')[0],
+							version: data.split('version="')[1].split('" xmlns="')[0],
+							project: data.split('<name>')[1].split('</name>')[0],
+							description: data.split('<description>')[1].split('</description>')[0]
+						}
+						console.log(colors.red('Project: ')+info.project);
+						console.log(colors.red('Descrip: ')+info.description);
+						console.log(colors.red('Version: ')+info.version);
+						console.log(colors.red('Package: ')+info.package);
+						if(onClose != undefined)
+			    			onClose();
+						return info;
+					}
+				}
+			});
 		};
 	};
 
