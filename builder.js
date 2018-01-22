@@ -106,18 +106,18 @@
 								if((task[0] == 'init')){
 									config.mod.init(process.env.BUILDER_ENV);
 								}else{
-									if((task[0] == 'status')){
-										console.log(colors.red("=================================================="));
+									if(task[0] == 'status'){
+										console.log(colors.green("=================================================="));
 										console.log(colors.green('Working on'));
-										console.log(colors.red("=================================================="));
+										console.log(colors.green("=================================================="));
 										config.mod.status(function () {
+											console.log(colors.green("=================================================="));
 											if(argv.full){
-												console.log(colors.red("=================================================="));
 												console.log(colors.green("GIT"));
 												that.run('git status');
-											}else{
+											} /*else{
 												console.log("Argument unavailable");
-											}
+											}*/
 										});
 										
 									}else{

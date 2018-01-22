@@ -202,10 +202,10 @@
 							project: data.split('<name>')[1].split('</name>')[0],
 							description: data.split('<description>')[1].split('</description>')[0]
 						}
-						console.log(colors.red('Project: ')+info.project);
-						console.log(colors.red('Descrip: ')+info.description);
-						console.log(colors.red('Version: ')+info.version);
-						console.log(colors.red('Package: ')+info.package);
+						console.log(colors.green('Project: ')+info.project);
+						console.log(colors.green('Descrip: ')+info.description);
+						console.log(colors.green('Version: ')+info.version);
+						console.log(colors.green('Package: ')+info.package);
 						if(onClose != undefined)
 			    			onClose();
 						return info;
