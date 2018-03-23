@@ -38,6 +38,7 @@
 			});
 
 			sp.on('close', function(code) {
+				console.log(colors.green("> " + cmd + ' finished ' + code));
 			    if(onClose != undefined && code == 0)
 			    	onClose(true);
 			});

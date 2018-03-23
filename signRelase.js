@@ -21,16 +21,16 @@ var signed = new function(){
 							output  = enviroment+'-'+new Date().getTime()+".apk";
 						self.run('jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore '+conf['keystore']+' -storepass '+conf['storepass']+'  -keypass '+conf['keypass']+' '+apkpath+' '+conf['keyalias'],function(){
 							self.run('zipalign -v 4 '+apkpath+' '+output,function(){
-								console.log('Create singed '+output);
+								console.log(colors.green('Create singed '+output));
 							})
 						});
 					});
 				}else{
-					console.log("You need set keystore config for "+enviroment);
+					console.log(colors.red("You need set keystore config for "+enviroment));
 				}
 			},
 			err=> {
-				console.log(err);
+				console.log(colors.red(err));
 			}
 		)
 	}

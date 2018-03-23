@@ -162,7 +162,7 @@
 			       }
 			       if(onSave != undefined)
 			       	onSave(that.conf);
-			       console.log(colors.green("> THE " + process.env.BUILDER_ENV + " config.xml WAS SAVED!"));
+			       console.log(colors.green("> " + process.env.BUILDER_ENV + " config.xml saved!"));
 			   }); 
 		};
 

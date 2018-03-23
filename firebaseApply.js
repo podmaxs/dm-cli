@@ -1,6 +1,7 @@
 'use strict';
 
-var fs = require('fs');
+var fs = require('fs'),
+    colors   = require('colors');
 
 var firebase = new function(){
     var self = this;
@@ -38,9 +39,10 @@ var firebase = new function(){
     }
 
     this.apply = function(env){
-      return new Promise((resolve) =>{
+      return new Promise((resolve) => {
         var config = fs.readFileSync("config.xml").toString(),
-            name   = self.getValue(config, "name")
+            name   = self.getValue(config, "name");
+        
         if (self.directoryExists("platforms/ios")) {
           var paths = ["src/projects/firebase/"+env+"/GoogleService-Info.plist"];
 
@@ -50,7 +52,7 @@ var firebase = new function(){
                 var contents = fs.readFileSync(paths[i]).toString();
                 fs.writeFileSync("platforms/ios/" + name + "/Resources/GoogleService-Info.plist", contents);
                 //that.checkDir("platforms/ios/" + name + "/Resources/Resources/");
-                fs.writeFileSync("platforms/ios/" + name + "/Resources/Resources/GoogleService-Info.plist", contents)
+                fs.writeFileSync("platforms/ios/" + name + "/Resources/Resources/GoogleService-Info.plist", contents);
                 fs.writeFileSync("GoogleService-Info.plist", contents);
                 fs.writeFileSync("platforms/ios/www/GoogleService-Info.plist", contents);
               } catch(err) {
@@ -77,19 +79,19 @@ var firebase = new function(){
                 var strings = fs.readFileSync("platforms/android/res/values/strings.xml").toString();
 
                 // strip non-default value
-                strings = strings.replace(new RegExp('<string name="google_app_id">([^\@<]+?)<\/string>', "i"), '')
+                strings = strings.replace(new RegExp('<string name="google_app_id">([^\@<]+?)<\/string>', "i"), '');
 
                 // strip non-default value
-                strings = strings.replace(new RegExp('<string name="google_api_key">([^\@<]+?)<\/string>', "i"), '')
+                strings = strings.replace(new RegExp('<string name="google_api_key">([^\@<]+?)<\/string>', "i"), '');
 
                 // strip empty lines
-                strings = strings.replace(new RegExp('(\r\n|\n|\r)[ \t]*(\r\n|\n|\r)', "gm"), '$1')
+                strings = strings.replace(new RegExp('(\r\n|\n|\r)[ \t]*(\r\n|\n|\r)', "gm"), '$1');
 
                 // replace the default value
-                strings = strings.replace(new RegExp('<string name="google_app_id">([^<]+?)<\/string>', "i"), '<string name="google_app_id">' + json.client[0].client_info.mobilesdk_app_id + '</string>')
+                strings = strings.replace(new RegExp('<string name="google_app_id">([^<]+?)<\/string>', "i"), '<string name="google_app_id">' + json.client[0].client_info.mobilesdk_app_id + '</string>');
 
                 // replace the default value
-                strings = strings.replace(new RegExp('<string name="google_api_key">([^<]+?)<\/string>', "i"), '<string name="google_api_key">' + json.client[0].api_key[0].current_key + '</string>')
+                strings = strings.replace(new RegExp('<string name="google_api_key">([^<]+?)<\/string>', "i"), '<string name="google_api_key">' + json.client[0].api_key[0].current_key + '</string>');
 
                 fs.writeFileSync("platforms/android/res/values/strings.xml", strings);
               } catch(err) {
@@ -100,7 +102,7 @@ var firebase = new function(){
             }
           }
         }
-          setTimeout(()=>{resolve(true); console.log("Write firebase "+env)},500);
+          setTimeout(()=>{resolve(true); console.log(colors.green("> Write firebase "+env))},500);
       });
     };
 

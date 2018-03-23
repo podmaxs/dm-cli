@@ -8,29 +8,24 @@
 	let git      = require('./git');
 	let firebase = require('./firebaseApply'),
 		singned  = require('./signRelase'),
-		helpsrv  = require('./help');
+		helpsrv  = require('./help'),
+		rl 		 = require('readline');
 
 	var builder  = new function(){
 		var that = this;
 		var task = argv['_'];
+		const options = {
+		  maxBuffer: 1000 * 1024
+		};
 
-		this.reloadPLatforms = function(){
-			that.reload_platform('android', function(){
-				that.reload_platform('ios', function(){
-					brand.mod.update(process.env.BUILDER_ENV,function(){
-						that.run('cordova plugin add cordova-plugin-firebase@0.1.23', () => {
-							firebase.apply(process.env.BUILDER_ENV)
-							.then(()=>{
-								console.log('switched to '+process.env.BUILDER_ENV);
-							});
-						})
-					});		
-				});
-			});
-		}
+		/**
+		 * 
+		 * 
+		 */
 		this.create = function(){
 			if(task.length>=1){
 				var cmd = that.getCmd();
+				
 				if((task[0] == 'run' || task[0] == 'build' || task[0] == 'prepare' || task[0] == 'emulate') && argv.quick==undefined){
 					firebase.apply(process.env.BUILDER_ENV)
 					.then(()=>{
@@ -46,7 +41,7 @@
 					if((task[0] == 'switch')){
 						config.mod.update(function(conf){
 							if(task[1] == 'all'){
-								console.log(colors.green('switching to '+process.env.BUILDER_ENV));
+								console.log(colors.green('> Switching to '+process.env.BUILDER_ENV));
 								that.run('cordova plugin rm cordova-plugin-firebase',
 									() => {
 										that.reloadPLatforms();
@@ -77,7 +72,7 @@
 													that.run('cordova plugin add cordova-plugin-firebase@0.1.23', () => {
 														firebase.apply(process.env.BUILDER_ENV)
 														.then(()=>{
-															console.log('switched to '+process.env.BUILDER_ENV);
+															console.log('> Switched to '+process.env.BUILDER_ENV);
 														});
 													})
 												});
@@ -86,7 +81,7 @@
 									
 								}else{
 									brand.mod.update(process.env.BUILDER_ENV,function(){
-										console.log('switched to '+process.env.BUILDER_ENV);
+										console.log('> Switched to '+process.env.BUILDER_ENV);
 									});
 								}
 							}
@@ -97,7 +92,7 @@
 							if(task[1] == 'android'){
 								singned.deployApk();
 							}else{
-								console.log("Signed build "+task[1]+" unavailable");
+								console.log(colors.red("> Signed build for "+task[1]+" unsupported"));
 							}
 						}else{
 							if(task[0] == 'help' || task[0] == 'h'){
@@ -107,17 +102,13 @@
 									config.mod.init(process.env.BUILDER_ENV);
 								}else{
 									if(task[0] == 'status'){
-										console.log(colors.green("=================================================="));
-										console.log(colors.green('Working on'));
-										console.log(colors.green("=================================================="));
+										console.log(colors.green("==================================================\n >> Working on << \n=================================================="));
 										config.mod.status(function () {
 											console.log(colors.green("=================================================="));
 											if(argv.full){
 												console.log(colors.green("GIT"));
 												that.run('git status');
-											} /*else{
-												console.log("Argument unavailable");
-											}*/
+											}
 										});
 										
 									}else{
@@ -132,10 +123,14 @@
 					}
 				}
 			}else{
-				console.log("The task builder is undefined ");
+				console.log(colors.red("> The task builder is undefined"));
 			}
 		}
 
+		/**
+		 * Build command to execute
+		 * @return {string} 
+		 */
 		this.getCmd = function(){
 			let build    = ' serve ';
 			let platform = ' ';
@@ -147,26 +142,64 @@
 				platform=task[1];
 			if(task[0] == 'run' || task[0] == 'serve' || task[0] == 'build' || task[0] == 'prepare' || task[0] == 'emulate')
 				build = task[0];
-			return 	'ionic '+build+' '+platform;
+			return 'ionic '+build+' '+platform;
 		}
 
-		this.reload_platform = function(platform,call){
-			that.run('cordova platform rm '+platform,function(){
-				that.run('cordova platform add '+platform, function(){
-					call();
-				})
+		/**
+		 * Reload both platforms and add Firebase 0.1.23 plugin to project
+		 * @return {string} Result log
+		 */
+		this.reloadPLatforms = function(){
+			that.reload_platform('android', function(){
+				that.reload_platform('ios', function(){
+					brand.mod.update(process.env.BUILDER_ENV,function(){
+						that.run('cordova plugin add cordova-plugin-firebase@0.1.23', () => {
+							firebase.apply(process.env.BUILDER_ENV)
+							.then(()=>{
+								console.log(colors.green('> Switched to '+process.env.BUILDER_ENV));
+							});
+						})
+					});		
+				});
 			});
 		}
 
+		/**
+		 * Remove and add platform
+		 * 
+		 * @param  {string} 	platform "ios" | "android"
+		 * @param  {function} 	call     callback
+		 */
+		this.reload_platform = function(platform,call){
+			that.run('cordova platform rm '+platform, function(){
+					that.run('cordova platform add '+platform, function(){
+						call();
+					});
+				},
+				() => {
+					console.log(colors.red('error on cordova platform rm '+platform));
+					that.ask('Do you want to try again? (Yes / No)', function(answer) {
+						if(answer != undefined && answer != ''){
+							if(answer === 'yes'||answer === 'Yes'||answer === 'YES'){
+					  			that.run('ionic platform rm ios && ionic platform add ios && ionic plugin add cordova-plugin-firebase@0.1.23', function(){
+									that.reloadPLatforms();
+								});
+							}
+						}
+					});
+				}
+			);
+		}
+
 		this.run = function(cmd,onClose,onError){
-			var sp = exec(cmd);
+			var sp = exec(cmd, options);
 
 			sp.stdout.on('data', function(data) {
 			    console.log(data);
 			});
 
 			sp.stderr.on('data', function(data,log) {
-			    console.log(data);
+			    console.log(colors.red(data));
 			    if(onError != undefined)
 			    	onError(true);
 			});
@@ -181,5 +214,18 @@
 			    	onClose(true);
 			});
 		}
+
+		this.ask = function(question, callback) {
+	  		var r = rl.createInterface({
+			    input: process.stdin,
+			    output: process.stdout
+			});
+		  
+		  	r.question(question + '\n', function(answer) {
+		    	r.close();
+		    	callback(answer);
+		  	});
+		}
+
 	}
 	exports.mod = builder;
