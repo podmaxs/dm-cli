@@ -1,6 +1,6 @@
 {
   "name": "dynamicmind-cli",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "dynamicmind client",
   "main": "index.js",
   "bin": {
@@ -12,9 +12,9 @@
   "keywords": [
     "dynamicmind"
   ],
-  "repository" : { 
-  	"type" : "git", 
-  	"url" : "https://github.com/podmaxs/dm-cli.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/podmaxs/dm-cli.git"
   },
   "author": "podmaxs",
   "license": "MIT",
