@@ -12,7 +12,7 @@
 				env = 'default';
 			that.run('cp ./src/projects/brand/'+env+'/* ./resources/',function(st){
 				if(st === true){
-					that.run('ionic resources ',function(){
+					that.run('ionic cordova resources ',function(){
 						if(st === true){
 							if(progressCall != undefined)
 								progressCall();

@@ -108,7 +108,7 @@
 			});
 		};
 
-		this.readBiulderEnviroment = function(env){
+		this.readBuilderEnvironment = function(env){
 			return new Promise((resolve, reject) =>{
 				fs.readFile(pwd+'/builder.config.json', 'utf8', function (err,data) {
 				  	if(err){

@@ -12,7 +12,7 @@ var signed = new function(){
 
 	this.deployApk = function(){
 		enviroment = process.env.BUILDER_ENV || "";
-		identity.mod.readBiulderEnviroment(enviroment)
+		identity.mod.readBuilderEnvironment(enviroment)
 		.then(
 			conf => {
 				if(conf['keystore'] && conf['keyalias'] && conf['storepass'] && conf['keypass']){
@@ -21,7 +21,7 @@ var signed = new function(){
 							output  = enviroment+'-'+new Date().getTime()+".apk";
 						self.run('jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore '+conf['keystore']+' -storepass '+conf['storepass']+'  -keypass '+conf['keypass']+' '+apkpath+' '+conf['keyalias'],function(){
 							self.run('zipalign -v 4 '+apkpath+' '+output,function(){
-								console.log(colors.green('Create singed '+output));
+								console.log(colors.green('>>> Singed '+output+' successfully created!'));
 							})
 						});
 					});

@@ -15,7 +15,7 @@
 		var that = this;
 		var task = argv['_'];
 		const options = {
-		  maxBuffer: 1000 * 1024
+		  maxBuffer: 2000 * 1024
 		};
 
 		/**
@@ -42,7 +42,7 @@
 						config.mod.update(function(conf){
 							if(task[1] == 'all'){
 								console.log(colors.green('> Switching to '+process.env.BUILDER_ENV));
-								that.run('cordova plugin rm cordova-plugin-firebase',
+								that.run('ionic cordova plugin rm cordova-plugin-firebase',
 									() => {
 										that.reloadPLatforms();
 									},
@@ -53,7 +53,7 @@
 							}else{
 								if(task[1] == 'android' || task[1] == 'ios'){
 
-									that.run('cordova plugin rm cordova-plugin-firebase',
+									that.run('ionic cordova plugin rm cordova-plugin-firebase',
 										() => {
 											that.reload_platform(task[1], function(){
 												brand.mod.update(process.env.BUILDER_ENV,function(){
@@ -69,7 +69,7 @@
 										()=>{
 											that.reload_platform(task[1], function(){
 												brand.mod.update(process.env.BUILDER_ENV,function(){
-													that.run('cordova plugin add cordova-plugin-firebase@0.1.23', () => {
+													that.run('ionic cordova plugin add cordova-plugin-firebase@0.1.23', () => {
 														firebase.apply(process.env.BUILDER_ENV)
 														.then(()=>{
 															console.log('> Switched to '+process.env.BUILDER_ENV);
@@ -85,14 +85,13 @@
 									});
 								}
 							}
-							
 						},false);
 					}else{
 						if(task[0] == 'signed'){
 							if(task[1] == 'android'){
 								singned.deployApk();
 							}else{
-								console.log(colors.red("> Signed build for "+task[1]+" unsupported"));
+								console.log(colors.red("> Signed build for "+task[1]+" unsupported. Use android platform."));
 							}
 						}else{
 							if(task[0] == 'help' || task[0] == 'h'){
@@ -106,11 +105,10 @@
 										config.mod.status(function () {
 											console.log(colors.green("=================================================="));
 											if(argv.full){
-												console.log(colors.green("GIT"));
+												console.log(colors.inverse("GIT"));
 												that.run('git status');
 											}
 										});
-										
 									}else{
 										firebase.apply(process.env.BUILDER_ENV)
 										.then(()=>{
@@ -140,9 +138,10 @@
 				process.env.BUILDER_ENV = 'default';
 			if(task[1] == 'android' || task[1] == 'ios' || task[1] == 'browser' || task[1] == 'window')
 				platform=task[1];
-			if(task[0] == 'run' || task[0] == 'serve' || task[0] == 'build' || task[0] == 'prepare' || task[0] == 'emulate')
-				build = task[0];
-			return 'ionic '+build+' '+platform;
+			if(task[0] == 'build' || task[0] == 'compile' || task[0] == 'emulate' || task[0] == 'prepare' || task[0] == 'run' || task[0] == 'serve')
+				build = 'cordova ' + task[0];
+				//build = task[0];
+			return 'ionic '+build+' '+platform+' --verbose';
 		}
 
 		/**
@@ -171,8 +170,8 @@
 		 * @param  {function} 	call     callback
 		 */
 		this.reload_platform = function(platform,call){
-			that.run('cordova platform rm '+platform, function(){
-					that.run('cordova platform add '+platform, function(){
+			that.run('ionic cordova platform rm '+platform, function(){
+					that.run('ionic cordova platform add '+platform, function(){
 						call();
 					});
 				},
@@ -181,7 +180,7 @@
 					that.ask('Do you want to try again? (Yes / No)', function(answer) {
 						if(answer != undefined && answer != ''){
 							if(answer === 'yes'||answer === 'Yes'||answer === 'YES'){
-					  			that.run('ionic platform rm ios && ionic platform add ios && ionic plugin add cordova-plugin-firebase@0.1.23', function(){
+					  			that.run('ionic cordova platform rm ios && ionic cordova platform add ios && ionic cordova plugin add cordova-plugin-firebase@0.1.23', function(){
 									that.reloadPLatforms();
 								});
 							}
@@ -209,7 +208,11 @@
 			});
 
 			sp.on('close', function(code) {
-			    console.log(colors.green(cmd + ' finished ' + code));
+				if(code==0)
+			    	console.log(colors.green(cmd + ' finished ' + code));
+			    else
+			    	console.log(colors.red(cmd + ' finished ' + code));
+			    
 			    if(onClose != undefined && code == 0)
 			    	onClose(true);
 			});
