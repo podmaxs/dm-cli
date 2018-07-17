@@ -1,6 +1,6 @@
 {
   "name": "dynamicmind-cli",
-  "version": "1.0.10",
+  "version": "2.0.0",
   "description": "dynamicmind client",
   "main": "index.js",
   "bin": {
