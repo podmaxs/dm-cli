@@ -194,7 +194,8 @@
 			var sp = exec(cmd, options);
 
 			sp.stdout.on('data', function(data) {
-			    console.log(data);
+			    // console.log(data);
+			    process.stdout.write("" + data.toString() + " \r");
 			});
 
 			sp.stderr.on('data', function(data,log) {
@@ -208,12 +209,12 @@
 			});
 
 			sp.on('close', function(code) {
-				if(code==0)
+				if(code===0)
 			    	console.log(colors.green(cmd + ' finished ' + code));
 			    else
 			    	console.log(colors.red(cmd + ' finished ' + code));
 			    
-			    if(onClose != undefined && code == 0)
+			    if(onClose != undefined && (code == 0 || (code != 0 && task[0] === 'run' && argv.quick==undefined)))
 			    	onClose(true);
 			});
 		}

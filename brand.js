@@ -26,7 +26,8 @@
 			var sp=exec(cmd);
 
 			sp.stdout.on('data', function(data) {
-			    console.log(data);
+			    // console.log(data);
+			    process.stdout.write("" + data.toString() + " \r");
 			});
 
 			sp.stderr.on('data', function(data) {
@@ -38,7 +39,11 @@
 			});
 
 			sp.on('close', function(code) {
-				console.log(colors.green("> " + cmd + ' finished ' + code));
+				if(code===0)
+					console.log(colors.green("> " + cmd + ' finished ' + code));
+				else
+			    	console.log(colors.red(cmd + ' finished ' + code));
+
 			    if(onClose != undefined && code == 0)
 			    	onClose(true);
 			});
