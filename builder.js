@@ -1,21 +1,21 @@
 'use strict';
 
-	let exec     = require('child_process').exec;
-	let argv     = require('yargs').argv;
-	let brand    = require('./brand');
-	let colors   = require('colors');
-	let config   = require('./identity');
-	let git      = require('./git');
-	let firebase = require('./firebaseApply'),
+	let exec     = require('child_process').exec,
+		argv     = require('yargs').argv,
+		brand    = require('./brand'),
+		colors   = require('colors'),
+		config   = require('./identity'),
+		git      = require('./git'),
+		firebase = require('./firebaseApply'),
 		singned  = require('./signRelase'),
 		helpsrv  = require('./help'),
 		rl 		 = require('readline');
 
 	var builder  = new function(){
-		var that = this;
-		var task = argv['_'];
+		var that = this,
+			task = argv['_'];
 		const options = {
-		  maxBuffer: 2000 * 1024
+		 	maxBuffer: 2000 * 1024
 		};
 
 		/**
@@ -120,7 +120,7 @@
 						}
 					}
 				}
-			}else{
+			} else {
 				console.log(colors.red("> The task builder is undefined"));
 			}
 		}
@@ -130,15 +130,17 @@
 		 * @return {string} 
 		 */
 		this.getCmd = function(){
-			let build    = ' serve ';
-			let platform = ' ';
+			let build    = ' serve ',
+				platform = ' ';
 			if(argv.env != undefined)
 				process.env.BUILDER_ENV = argv.env;
 			else
 				process.env.BUILDER_ENV = 'default';
+
 			if(task[1] == 'android' || task[1] == 'ios' || task[1] == 'browser' || task[1] == 'window')
 				platform=task[1];
-			if(task[0] == 'build' || task[0] == 'compile' || task[0] == 'emulate' || task[0] == 'prepare' || task[0] == 'run' || task[0] == 'serve')
+			
+			if(task[0] == 'build' || task[0] == 'compile' || task[0] == 'emulate' || task[0] == 'prepare' || task[0] == 'run')
 				build = 'cordova ' + task[0];
 				//build = task[0];
 			return 'ionic '+build+' '+platform+' --verbose';
@@ -191,6 +193,7 @@
 		}
 
 		this.run = function(cmd,onClose,onError){
+			console.log(colors.cyan('> ' + cmd + ' started:'));
 			var sp = exec(cmd, options);
 
 			sp.stdout.on('data', function(data) {

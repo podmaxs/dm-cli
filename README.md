@@ -1,6 +1,7 @@
 [![npm][npm-badge]][npm-badge-url]
 [![downloads][npm-downloads]][npm-downloads-url]
 [![install size][packagephobia-badge]][packagephobia-badge-url]
+[![dependencies][dependencies-badge]][dependencies-url]
 
 # DM CLI
 
@@ -61,3 +62,5 @@ If you find issues, please let us know:
 [npm-downloads-url]: https://npmcharts.com/compare/dynamicmind-cli?minimal=true
 [packagephobia-badge]: https://packagephobia.now.sh/badge?p=dynamicmind-cli
 [packagephobia-badge-url]: https://packagephobia.now.sh/result?p=dynamicmind-cli
+[dependencies-badge]: https://david-dm.org/podmaxs/dm-cli/status.svg
+[dependencies-url]: https://david-dm.org/podmaxs/dm-cli

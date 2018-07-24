@@ -23,6 +23,7 @@
 		}
 
 		this.run = function(cmd,onClose){
+			console.log(colors.cyan('> ' + cmd + ' started:'));
 			var sp=exec(cmd);
 
 			sp.stdout.on('data', function(data) {
