@@ -1,18 +1,19 @@
 'use strict';
 
-	var exec = require('child_process').exec;
+	const { spawn } = require('child_process');
 	const argv = require('yargs').argv;
 	var colors = require('colors');
 
 	var brand = new function(){
-		var that = this;
+		var that 	  = this;
+		const options = { shell: true };
 
 		this.update = function(env,progressCall){
 			if(env == undefined)
 				env = 'default';
-			that.run('cp ./src/projects/brand/'+env+'/* ./resources/',function(st){
+			that.run('cp', ['./src/projects/brand/'+env+'/*', './resources/'], function(st){
 				if(st === true){
-					that.run('ionic cordova resources ',function(){
+					that.run('ionic', ['cordova', 'resources'], function(){
 						if(st === true){
 							if(progressCall != undefined)
 								progressCall();
@@ -22,13 +23,12 @@
 			});
 		}
 
-		this.run = function(cmd,onClose){
-			console.log(colors.cyan('> ' + cmd + ' started:'));
-			var sp=exec(cmd);
+		this.run = function(command, args, onClose){
+			console.log(colors.cyan(`> Starting: ${command} ${args.join(" ")}`));
+			var sp = spawn(command, args, options);
 
 			sp.stdout.on('data', function(data) {
-			    // console.log(data);
-			    process.stdout.write("" + data.toString() + " \r");
+			    process.stdout.write(`${data.toString()} \r`);
 			});
 
 			sp.stderr.on('data', function(data) {
@@ -41,9 +41,9 @@
 
 			sp.on('close', function(code) {
 				if(code===0)
-					console.log(colors.green("> " + cmd + ' finished ' + code));
+					console.log(colors.green(`> Finished: ${command} ${args.join(" ")} | code: ${code}`));
 				else
-			    	console.log(colors.red(cmd + ' finished ' + code));
+			    	console.log(colors.red(`> Finished: ${command} ${args.join(" ")} | code: ${code}`));
 
 			    if(onClose != undefined && code == 0)
 			    	onClose(true);

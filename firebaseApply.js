@@ -1,6 +1,6 @@
 'use strict';
 
-var fs = require('fs'),
+var fs       = require('fs'),
     colors   = require('colors');
 
 var firebase = new function(){
@@ -44,15 +44,15 @@ var firebase = new function(){
             name   = self.getValue(config, "name");
         
         if (self.directoryExists("platforms/ios")) {
-          var paths = ["src/projects/firebase/"+env+"/GoogleService-Info.plist"];
+          var paths = [`src/projects/firebase/${env}/GoogleService-Info.plist`];
 
           for (var i = 0; i < paths.length; i++) {
             if (self.fileExists(paths[i])) {
               try {
                 var contents = fs.readFileSync(paths[i]).toString();
-                fs.writeFileSync("platforms/ios/" + name + "/Resources/GoogleService-Info.plist", contents);
-                //that.checkDir("platforms/ios/" + name + "/Resources/Resources/");
-                fs.writeFileSync("platforms/ios/" + name + "/Resources/Resources/GoogleService-Info.plist", contents);
+                fs.writeFileSync(`platforms/ios/${name}/Resources/GoogleService-Info.plist`, contents);
+                //that.checkDir(`platforms/ios/${name}/Resources/Resources/`);
+                fs.writeFileSync(`platforms/ios/${name}/Resources/Resources/GoogleService-Info.plist`, contents);
                 fs.writeFileSync("GoogleService-Info.plist", contents);
                 fs.writeFileSync("platforms/ios/www/GoogleService-Info.plist", contents);
               } catch(err) {
@@ -65,7 +65,7 @@ var firebase = new function(){
         }
 
         if (self.directoryExists("platforms/android")) {
-          var paths = ["src/projects/firebase/"+env+"/google-services.json"];
+          var paths = [`src/projects/firebase/${env}/google-services.json`];
 
           for (var i = 0; i < paths.length; i++) {
             if (self.fileExists(paths[i])) {
@@ -102,7 +102,7 @@ var firebase = new function(){
             }
           }
         }
-          setTimeout(()=>{resolve(true); console.log(colors.green("> Write firebase "+env))},500);
+          setTimeout(()=>{resolve(true); console.log(colors.green(`> Write firebase ${env}`))},500);
       });
     };
 
@@ -111,4 +111,4 @@ var firebase = new function(){
     }
 };
 
-  module.exports = firebase;
+module.exports = firebase;

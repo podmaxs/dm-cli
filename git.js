@@ -1,6 +1,6 @@
 'use strict';
 
-	let exec     = require('child_process').exec;
+	const { spawn } = require('child_process');
 	let argv     = require('yargs').argv;
 	let brand    = require('./brand');
 	let colors   = require('colors');
@@ -9,6 +9,7 @@
 	var git = new function(){
 
 		var task = argv['_'];
+		const options = { shell: true };
 		
 		var that = this;
 		
@@ -22,23 +23,19 @@
 					platform = task[1];
 				var path = that.pathEnv(last_version);
 
-				that.cmd.push('/usr/bin/git add .');
-
-				that.cmd.push('/usr/bin/git tag -a ' + last_version + '.' + path  + ' -m "New build '+path+'" ');
-
-				that.cmd.push('/usr/bin/git commit -am " New version of ' + platform + ' - ' + enviroment + ' ' + last_version + '"');
-
-				that.cmd.push('/usr/bin/git push --all');
-
-				that.cmd.push('/usr/bin/git push --follow-tags');
+				that.cmd.push(['add', '.']);
+				that.cmd.push(['tag', '-a', `${last_version}.${path}`, '-m', `New build ${path}` ]);
+				that.cmd.push(['commit', '-am', `New version of ${platform} - ${enviroment} ${last_version}`]);
+				that.cmd.push(['push', '--all']);
+				that.cmd.push(['push', '--follow-tags']);
 			}
 
 			if(that.cmd[step] != undefined){
-				that.run(that.cmd[step],function() {
+				that.run('git', that.cmd[step], function() {
 					that.commit(last_version,step+1);
 				});
 			}else{
-				console.log(colors.blue('>> COMMIT '+last_version+' - '+enviroment));
+				console.log(colors.blue(`>>> COMMIT ${last_version} - ${enviroment}`));
 			}
 		};
 
@@ -54,12 +51,12 @@
 			return data;
 		};
 
-		this.run = function(cmd,onClose){
-			console.log(colors.cyan('> ' + cmd + ' started:'));
-			var sp = exec(cmd);
+		this.run = function(command,args,onClose){
+			console.log(colors.cyan(`> Starting: ${command} ${args.join(" ")}`));
+			var sp = spawn(command, args, options);
 
 			sp.stdout.on('data', function(data) {
-			    console.log(data);
+			    process.stdout.write(`${data.toString()} \r`);
 			});
 
 			sp.stderr.on('data', function(data) {

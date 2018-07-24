@@ -7,7 +7,7 @@ var help = new function(){
 
 	this.getHelp = function(){
 		var contents = fs.readFileSync(__dirname+'/helpInfo.dm').toString();
-		console.log(colors.yellow(contents));
+		console.log(colors.green(contents));
 	}
 };
 module.exports = help;
